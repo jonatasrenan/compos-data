@@ -84,3 +84,8 @@ def obter_trabalhos(gt):
     [trabalho.update(gt) for trabalho in trabalhos]
     return trabalhos
 
+flat = lambda l: [item for sublist in l for item in sublist]
+encontros = obter_encontros()
+gts = flat(map(obter_gts, encontros))
+trabalhos = flat(map(obter_trabalhos, gts))
+
