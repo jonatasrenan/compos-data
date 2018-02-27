@@ -69,3 +69,18 @@ def obter_gts(encontro):
     return gts
 
 
+
+def obter_trabalhos(gt):
+    """
+    Obtém todos os trabalhos de um determinado GT
+    :param gt: dicionario contendo dados do GT
+    :return: lista dos trabalhos do GT
+    """
+    endereco = 'http://www.compos.org.br/anais_texto_por_gt.php?idEncontro=%s' % gt['compos_cod']
+    dados = {'xajax': 'carregaObjetoAnais', 'xajaxargs[]': [gt['gt_id'], gt['compos_id']]}
+    seletor = '.boxLine'
+    selecoes = acessar(endereco, dados, seletor)
+    trabalhos = map(raspar_trabalho, selecoes)
+    [trabalho.update(gt) for trabalho in trabalhos]
+    return trabalhos
+
