@@ -89,3 +89,9 @@ encontros = obter_encontros()
 gts = flat(map(obter_gts, encontros))
 trabalhos = flat(map(obter_trabalhos, gts))
 
+import csv
+keys = trabalhos[0].keys()
+with open('trabalhos.csv', 'w') as output_file:
+    dict_writer = csv.DictWriter(output_file, keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(trabalhos)
