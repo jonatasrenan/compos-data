@@ -40,3 +40,16 @@ def acessar(endereco, dados, seletor):
     conteudo = lxml.html.fromstring(resposta.content)
     return CSSSelector(seletor)(conteudo)
 
+
+def obter_encontros():
+    """
+    Obtém todos os encontros do site
+    :return: lista dos encontros
+    """
+
+    endereco = 'http://www.compos.org.br/anais_encontros.php'
+    dados = {'xajax': 'carregaObjetoAnaisEncontro'}
+    seletor = 'a'
+    selecoes = acessar(endereco, dados, seletor)
+    return map(raspar_encontro, selecoes)
+
