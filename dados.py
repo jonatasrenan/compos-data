@@ -53,3 +53,19 @@ def obter_encontros():
     selecoes = acessar(endereco, dados, seletor)
     return map(raspar_encontro, selecoes)
 
+
+def obter_gts(encontro):
+    """
+    Obtém todos os gts de um determinado encontro
+    :param encontro: dicionário contendo dados do encontro
+    :return: lista dos GTs
+    """
+    endereco = 'http://www.compos.org.br/anais_texto_por_gt.php?idEncontro=%s' % encontro['compos_cod']
+    dados = {'xajax': 'carregaGt', 'xajaxargs[]': encontro['compos_id']}
+    seletor = 'a'
+    selecoes = acessar(endereco, dados, seletor)
+    gts = map(raspar_gt, selecoes)
+    [gt.update(encontro) for gt in gts]
+    return gts
+
+
