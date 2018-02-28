@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     Limpeza dos dados do site compos.org.br
 
@@ -6,13 +7,11 @@
 
 import re
 
-### Configuração do cache
+# Configuração do cache
 import requests
 import requests_cache
-requests_cache.install_cache('cache')
 
-### Seletor CSS
-import lxml.html
+# Seletor CSS
 from lxml.cssselect import CSSSelector
 
 
@@ -21,6 +20,7 @@ def raspar_encontro(seletor):
     cod = seletor.get('href')[-4:]
     ano = seletor.text.split()[1]
     local = ' '.join(seletor.text.split()[5:]).replace(' /', '/').replace('/ ', '/')
+    requests_cache.install_cache('cache')
     id_response = requests.get('http://www.compos.org.br/anais_texto_por_gt.php?idEncontro=' + cod)
     id = re.search('xajax_carregaGt\(\'(.*)\'', id_response.text).group(1)
     return {'compos_id': id, 'compos_nome': nome, 'compos_cod': cod, 'compos_ano': ano, 'compose_local': local}
@@ -34,7 +34,7 @@ def raspar_gt(selector):
 
 def raspar_trabalho(selector):
     link = CSSSelector('a')(selector)[0].get('href')
-    titulo = CSSSelector('a')(selector)[0].text
+    titulo = CSSSelector('a')(selector)[0].text.replace('\n', ' ').replace('\r', '')
     autor = [x for x in CSSSelector('p:nth-child(2)')(selector)[0].itertext()][1]
     return {'trabalho_link': link, 'trabalho_titulo': titulo, 'trabalho_autor': autor}
 

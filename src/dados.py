@@ -1,24 +1,17 @@
+# -*- coding: utf-8 -*-
 """
     Extração dos dados do site compos.org.br
 
     jonatasrenan@dcc.ufmg.br
 """
 
-from raspagem import raspar_encontro, raspar_gt, raspar_trabalho
+import lxml.html
+import requests
+import requests_cache
+from lxml.cssselect import CSSSelector
+from src.raspagem import raspar_encontro, raspar_gt, raspar_trabalho
 
-
-def map(fn, l):
-    """
-    Redefinição da função map, paralela, aguarda threads no final e retorna resultado expandido em lista.
-    :param fn: função
-    :param l: lista
-    :return: resultado do fn em l expandido em lista
-    """
-    import concurrent.futures
-    threads = concurrent.futures.ThreadPoolExecutor(max_workers=20)
-    result = threads.map(fn, l)
-    threads.shutdown(wait=True)
-    return list(result)
+from src.utils import map
 
 
 def acessar(endereco, dados, seletor):
@@ -30,11 +23,6 @@ def acessar(endereco, dados, seletor):
     :param seletor: seletor aplicado na resposta da requisição
     :return: resultados da seleção
     """
-    import requests
-    import requests_cache
-    import lxml.html
-    from lxml.cssselect import CSSSelector
-
     requests_cache.install_cache('cache')
     resposta = requests.post(endereco, data=dados)
     conteudo = lxml.html.fromstring(resposta.content)
@@ -43,10 +31,9 @@ def acessar(endereco, dados, seletor):
 
 def obter_encontros():
     """
-    Obtém todos os encontros do site
+    Obtém todos os encontros
     :return: lista dos encontros
     """
-
     endereco = 'http://www.compos.org.br/anais_encontros.php'
     dados = {'xajax': 'carregaObjetoAnaisEncontro'}
     seletor = 'a'
@@ -56,7 +43,7 @@ def obter_encontros():
 
 def obter_gts(encontro):
     """
-    Obtém todos os gts de um determinado encontro
+    Obtém todos os GTs de um determinado encontro
     :param encontro: dicionário contendo dados do encontro
     :return: lista dos GTs
     """
@@ -67,7 +54,6 @@ def obter_gts(encontro):
     gts = map(raspar_gt, selecoes)
     [gt.update(encontro) for gt in gts]
     return gts
-
 
 
 def obter_trabalhos(gt):
@@ -84,14 +70,3 @@ def obter_trabalhos(gt):
     [trabalho.update(gt) for trabalho in trabalhos]
     return trabalhos
 
-flat = lambda l: [item for sublist in l for item in sublist]
-encontros = obter_encontros()
-gts = flat(map(obter_gts, encontros))
-trabalhos = flat(map(obter_trabalhos, gts))
-
-import csv
-keys = trabalhos[0].keys()
-with open('trabalhos.csv', 'w') as output_file:
-    dict_writer = csv.DictWriter(output_file, keys)
-    dict_writer.writeheader()
-    dict_writer.writerows(trabalhos)
