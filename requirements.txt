@@ -1,0 +1,5 @@
+lxml
+cssselect
+pdfminer3k
+requests-cache
+pymongo
