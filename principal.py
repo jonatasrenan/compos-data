@@ -5,7 +5,7 @@
     jonatasrenan@dcc.ufmg.br
 """
 from src.dados import obter_encontros, obter_gts, obter_trabalhos
-from src.trabalhos import download
+from src.trabalhos import download, doc2txt
 from src.utils import map, flat, criaCSV
 
 print('# Obtém encontros')
@@ -16,7 +16,10 @@ print('# Obtém trabalhos')
 trabalhos = flat(map(obter_trabalhos, gts))                 # Obtém trabalhos
 print('# Indexa %s itens encontrados (#)' % len(trabalhos))
 trabalhos = map(lambda i: {'#': i[0], **i[1]}, enumerate(trabalhos))  # cria índice '#'
+print('# Baixa documentos dos trabalhos')
+trabalhos = map(download, trabalhos)                        # Baixa documentos dos trabalhos
+print('# Converte arquivos para texto')
+trabalhos = map(doc2txt, trabalhos)                        # Baixa documentos dos trabalhos
+
 print('# Salva dados dos trabalhos em CSV')
 criaCSV(trabalhos, './trabalhos.csv')                       # Salva dados dos trabalhos em CSV
-print('# Baixa documentos dos trabalhos')
-map(download, trabalhos)                                    # Baixa documentos dos trabalhos
