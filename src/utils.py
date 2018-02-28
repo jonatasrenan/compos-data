@@ -30,7 +30,7 @@ def flat(l):
     return [item for sublist in l for item in sublist]
 
 
-def criaCSV(dics, nome_arquivo):
+def cria_csv(dics, nome_arquivo):
     """
     Cria CSV a partir de uma lista de dicionários
     :param dics: lista de dicionários
@@ -43,3 +43,8 @@ def criaCSV(dics, nome_arquivo):
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(dics)
+
+
+def le_csv(nome_arquivo):
+    import csv
+    return list(csv.DictReader(open(nome_arquivo)))
