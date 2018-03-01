@@ -93,6 +93,8 @@ def obter_campos(trabalho):
     # AI3 	Instituição do autor 3 do artigo
     # AN4 	Nome do autor 4 do artigo
     # AI4 	Instituição do autor 4 do artigo
+    trabalho = obter_autores(trabalho, texto)
+
     # RA1 	Nome do autor 1 da referência
     # RN1 	Nacionalidade do autor 1 da referência
     # RM1 	Indicação se o autor 1 da referência é membro do GT
@@ -106,7 +108,6 @@ def obter_campos(trabalho):
     # RN4 	Nacionalidade do autor 4 da referência
     # RM4 	Indicação se o autor 4 da referência é membro do GT
     # OBR 	Título da obra referenciada
-
     # ATC 	Indicação de autocitação (autor do artigo é o mesmo autor referenciado)
 
     # PC1-PC8
@@ -115,12 +116,37 @@ def obter_campos(trabalho):
     return trabalho
 
 
-def obter_palavras_chave(trabalho, texto):
+def obter_autores(trabalho, texto):
     """
-    Obtem palavras chaves do texto do trabalho
+    Obtem os autores do trabalho
     :param trabalho: dicionario contendo dados do trabalho
     :param texto: texto do arquivo do trabalho
-    :return: 
+    :return: trabalho com os autores incluídos
+    """
+    import re
+    a = trabalho["trabalho_autor"]
+    par = re.compile("\(.*?\)")
+    instituicoes = re.findall(par, a)
+    instituicoes = [i.replace(')', '').replace('(', '') for i in instituicoes]
+    nomes = par.split(a)
+    nomes = [nome.replace(',', '').strip() for nome in nomes if nome.strip() != ""]
+    if len(nomes) != len(instituicoes):
+        print('erro' % trabalho['#'])
+
+    for n in enumerate(nomes):
+        trabalho["AN%d" % (n[0]+1)] = n[1]
+    for i in enumerate(instituicoes):
+        trabalho["AI%d" % (i[0] + 1)] = i[1]
+
+    return trabalho
+
+
+def obter_palavras_chave(trabalho, texto):
+    """
+    Obtem palavras chaves do trabalho
+    :param trabalho: dicionario contendo dados do trabalho
+    :param texto: texto do arquivo do trabalho
+    :return: trabalho com as palavras-chaves incluídas
     """
     import re
     from src.utils import filtra
@@ -165,6 +191,15 @@ def obter_palavras_chave(trabalho, texto):
     pcs = [regex.sub('', p) for p in pcs]
     regex = re.compile('^[0-9] ')
     pcs = [regex.sub('', p) for p in pcs]
+
+    #
+    lista = []
+    for i in reversed(pcs):
+        if len(i) > 1:
+            lista = lista + [i]
+        if len(i) == 1:
+            lista[len(lista)-1] = "%s. %s" % (i, lista[len(lista)-1])
+    lista = reversed(lista)
 
     # salva palavras chaves
     for pc in enumerate(pcs):

@@ -13,14 +13,14 @@ COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicaç�
 |LOC|Local da Compós|x||
 |ARQ|Nome do arquivo|x||
 |ART|Título do artigo|x||
-|AN1|Nome do autor 1 do artigo|||
-|AI1|Instituição do autor 1 do artigo|||
-|AN2|Nome do autor 2 do artigo|||
-|AI2|Instituição do autor 2 do artigo|||
-|AN3|Nome do autor 3 do artigo|||
-|AI3|Instituição do autor 3 do artigo|||
-|AN4|Nome do autor 4 do artigo|||
-|AI4|Instituição do autor 4 do artigo|||
+|AN1|Nome do autor 1 do artigo|x||
+|AI1|Instituição do autor 1 do artigo|x||
+|AN2|Nome do autor 2 do artigo|x||
+|AI2|Instituição do autor 2 do artigo|x||
+|AN3|Nome do autor 3 do artigo|x||
+|AI3|Instituição do autor 3 do artigo|x||
+|AN4|Nome do autor 4 do artigo|x||
+|AI4|Instituição do autor 4 do artigo|x||
 |RA1|Nome do autor 1 da referência|||
 |RN1|Nacionalidade do autor 1 da referência|||
 |RM1|Indicação se o autor 1 da referência é membro do GT|||
