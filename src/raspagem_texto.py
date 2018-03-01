@@ -6,7 +6,7 @@
 """
 
 
-def trabalho_texto(arquivo):
+def limpeza(arquivo):
     """
     abre arquivo e faz uma limpeza inicial
         A limpeza consiste:
@@ -16,36 +16,49 @@ def trabalho_texto(arquivo):
     :return:
     """
     texto1 = list(open(arquivo))
-    texto2 = [linha.strip(" ") for linha in texto1]
-    texto3 = "".join(texto2)
-    texto4 = texto3.replace("\t", " ")
+    # Concatena
+    texto2 = "".join([linha.strip(" ") for linha in texto1])
 
-    texto5 = texto4.replace("\n\n\n", "\n\n")
-    texto5 = texto5.replace("\n \n", "\n\n")
-    texto5 = texto5.replace("---", "--")
-    texto5 = texto5.replace("___", "__")
-    texto5 = texto5.replace("–––", "––")
-    texto5 = texto5.replace("  ", " ")
-    while texto4 != texto5:
-        texto4 = texto5
-        texto5 = texto5.replace("\n\n\n", "\n\n")
-        texto5 = texto5.replace("\n \n", "\n\n")
-        texto5 = texto5.replace("---", "--")
-        texto5 = texto5.replace("___", "__")
-        texto5 = texto5.replace("–––", "––")
-        texto5 = texto5.replace("  ", " ")
+    # Remove caracteres não imprimíveis
+    # método muito lento
+    # from string import printable
+    # printable = printable + "çÇãÃẽẼĩĨõÕũŨäÄëËïÏöÖüÜâÂêÊîÎôÔûÛáÁéÉíÍóÓúÚàÀèÈìÌòÒùÙ"
+    # texto3 = "".join(char for char in texto2 if char in printable)
+    texto3 = texto2
 
+    def repl(texto):
+        """
+        Substitui várias substrings
+        :param texto: texto inicial
+        :return: texto modificado
+        """
+        #tratando caracteres invisíveis
+        return texto.replace("\n\n\n", "\n\n") \
+            .replace("\n \n", "\n\n") \
+            .replace("---", "--") \
+            .replace("___", "__") \
+            .replace("–––", "––") \
+            .replace("  ", " ") \
+            .replace(" ", " ") \
+            .replace("\t", " ")
 
-    texto6 = texto5.split("\n\n")
-    texto7 = [linha.replace("\n", "") for linha in texto6]
-    texto8 = [linha.strip() for linha in texto7]
-    texto9 = [linha for linha in texto8 if not linha.isdigit()]
-
-    texto10 = [
-        linha for linha in texto9
+    # repete repl(texto3) enquanto ouvir mudanca em texto3
+    from src.utils import delta
+    texto4 = delta(texto3, repl)
+    # Divide as frases
+    texto5 = texto4.split("\n\n")
+    # Remove quebras na mesma frase
+    texto6 = [linha.replace("\n", "") for linha in texto5]
+    # strip linhas
+    texto7 = [linha.strip() for linha in texto6]
+    # remove uma linha que contém somente um número
+    texto8 = [linha for linha in texto7 if not linha.isdigit()]
+    # remove frases específicas
+    texto9 = [
+        linha for linha in texto8
         if not linha == 'Associação Nacional dos Programas de Pós-Graduação em Comunicação'
     ]
-    return texto10
+    return texto9
 
 
 def obter_campos(trabalho):
@@ -54,7 +67,7 @@ def obter_campos(trabalho):
     if not os.path.isfile(arquivo):
         print("ERRO %s não encontrado" % trabalho['trabalho_texto'])
         return
-    texto = trabalho_texto(arquivo)
+    texto = limpeza(arquivo)
     if len(texto) == 0:
         print("Arquivo vazio %s" % trabalho['trabalho_texto'])
         return
@@ -129,7 +142,7 @@ def obter_palavras_chave(trabalho, texto):
 
     # troca palavras por outras
     linhas = limpa(linhas, '  ', substituto=' ')
-    linhas = limpa(linhas, ['[0-9]\.', '\.[0-9]'], substituto='.')
+    linhas = limpa(linhas, ['[0-9]\. ', '\.[0-9]'], substituto='.')
 
     # mantém só a primeira linha
     if len(linhas) == 0:
@@ -144,12 +157,14 @@ def obter_palavras_chave(trabalho, texto):
 
     # remove palavra se ela não contém nenhum caractere alfabético
     regex = re.compile('[^a-zA-Z]')
-    pcs = [p for p in pcs if regex.sub('', p).strip != ""]
+    pcs = [p for p in pcs if regex.sub('', p).strip() != ""]
 
     # remove número no final da palavra chave
-    # comentado pois confunde com a palavra-chave "Anos 50"
-    # regex = re.compile('[0-9]$')
-    # pcs = [regex.sub('', p) for p in pcs]
+    # TODO: melhorar isso, pode confundir com números que estão na palavra-chave
+    regex = re.compile(' [0-9]$')
+    pcs = [regex.sub('', p) for p in pcs]
+    regex = re.compile('^[0-9] ')
+    pcs = [regex.sub('', p) for p in pcs]
 
     # salva palavras chaves
     for pc in enumerate(pcs):

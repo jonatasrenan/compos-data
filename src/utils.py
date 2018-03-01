@@ -30,6 +30,20 @@ def flat(l):
     return [item for sublist in l for item in sublist]
 
 
+def delta(dado, func):
+    """
+    Aplica func no dado enquanto ainda houver alterações no dado
+    :param dado: dado inicial
+    :param func: funcao aplicada
+    :return: dado modificado diversas vezes pela funcao
+    """
+    delta = func(dado)
+    while delta != dado:
+        dado = delta
+        delta = func(dado)
+    return dado
+
+
 def cria_csv(dics, nome_arquivo):
     """
     Cria CSV à partir de uma lista de dicionários
