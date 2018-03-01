@@ -23,7 +23,7 @@ def raspar_encontro(seletor):
     requests_cache.install_cache('cache')
     id_response = requests.get('http://www.compos.org.br/anais_texto_por_gt.php?idEncontro=' + cod)
     id = re.search('xajax_carregaGt\(\'(.*)\'', id_response.text).group(1)
-    return {'compos_id': id, 'compos_nome': nome, 'compos_cod': cod, 'compos_ano': ano, 'compose_local': local}
+    return {'compos_id': id, 'compos_nome': nome, 'compos_cod': cod, 'compos_ano': ano, 'compos_local': local}
 
 
 def raspar_gt(selector):

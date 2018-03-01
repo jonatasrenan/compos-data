@@ -32,7 +32,7 @@ def flat(l):
 
 def cria_csv(dics, nome_arquivo):
     """
-    Cria CSV a partir de uma lista de dicionários
+    Cria CSV à partir de uma lista de dicionários
     :param dics: lista de dicionários
     :param nome_arquivo: nome do arquivo gerado
     :return: None
@@ -46,5 +46,10 @@ def cria_csv(dics, nome_arquivo):
 
 
 def le_csv(nome_arquivo):
+    """
+    Lê CSV e cria lista de dicionários
+    :param nome_arquivo: csv
+    :return: lista de dicionarios
+    """
     import csv
     return list(csv.DictReader(open(nome_arquivo)))

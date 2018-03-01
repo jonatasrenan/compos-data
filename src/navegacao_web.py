@@ -9,7 +9,7 @@ import lxml.html
 import requests
 import requests_cache
 from lxml.cssselect import CSSSelector
-from src.raspagem import raspar_encontro, raspar_gt, raspar_trabalho
+from src.raspagem_web import raspar_encontro, raspar_gt, raspar_trabalho
 
 from src.utils import map
 

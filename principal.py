@@ -4,7 +4,8 @@
 
     jonatasrenan@dcc.ufmg.br
 """
-from src.dados import obter_encontros, obter_gts, obter_trabalhos
+from src.navegacao_web import obter_encontros, obter_gts, obter_trabalhos
+from src.raspagem_texto import obter_campos
 from src.trabalhos import download, doc2txt
 from src.utils import map, flat, cria_csv, le_csv
 import os
