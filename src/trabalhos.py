@@ -52,12 +52,18 @@ def doc2txt(trabalho):
 
     if not os.path.isfile(arq_saida):
         if name.rsplit('.', 1)[-1].lower() == 'pdf':
-            proc = subprocess.Popen(["pdf2txt", "-t", "text", "-o", arq_saida, arq_entrada], stdout=subprocess.PIPE)
+            proc = subprocess.Popen(
+                ["pdf2txt", "-W0", "-L1", "-t", "text", "-o", arq_saida, arq_entrada],
+                stdout=subprocess.PIPE
+            )
             output = proc.communicate()[0]
             trabalho['trabalho_texto'] = arq_saida
             print('Convertido pdf2txt: %s para %s' % (arq_saida, arq_entrada))
-            return trabalho
+
         else:
             print("Não é pdf %s %s %s" % (trabalho['trabalho_link'], trabalho['trabalho_arquivo'], trabalho['#']))
-            trabalho['trabalho_text'] = "ERRO"
-            return trabalho
+            trabalho['trabalho_texto'] = "ERRO"
+    else:
+        trabalho['trabalho_texto'] = arq_saida
+
+    return trabalho

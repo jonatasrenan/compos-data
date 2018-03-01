@@ -28,5 +28,5 @@ print('# Baixa documentos dos trabalhos')
 trabalhos = map(download, trabalhos)                        # Baixa documentos dos trabalhos
 print('# Converte arquivos para texto')
 trabalhos = map(doc2txt, trabalhos)                        # Baixa documentos dos trabalhos
-
-
+print('# Extrai campos do trabalho')
+trabalhos = map(obter_campos, trabalhos)                        # Baixa documentos dos trabalhos

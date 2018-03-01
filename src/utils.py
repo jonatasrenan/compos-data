@@ -53,3 +53,55 @@ def le_csv(nome_arquivo):
     """
     import csv
     return list(csv.DictReader(open(nome_arquivo)))
+
+
+def filtra(texto_completo, substrings, ignore_case=True):
+    """
+    Retorna somente linhas no texto completo que contem ao menos uma substring
+    :param texto_completo: texto referencia
+    :param substrings: lista de substrings
+    :param ignore_case: ignorar case
+    :return: linhas que contém ao menos uma das substrings
+    """
+    ret = []
+    for l in texto_completo:
+        for s in substrings:
+            if ignore_case:
+                linha = l.lower()
+                palavra = s.lower()
+            else:
+                linha = l
+                palavra = s
+            if palavra in linha:
+                if linha not in ret:
+                    ret = ret + [linha]
+    return ret
+
+
+def limpa(texto_completo, substrings, ignore_case=True, substituto=""):
+    """
+    Remove lista de substring de um determinada string
+    :param texto_completo: string
+    :param substrings: lista de substrings
+    :param ignore_case: ignorar case
+    :param substituto: substitui por outro texto
+    :return: texto sem as substrings
+    """
+    import re
+
+    if type(substrings) is not list:
+        substrings = [substrings]
+
+    ret = []
+    for l in texto_completo:
+        line = l
+        for substring in substrings:
+            if ignore_case:
+                regex = re.compile(substring, re.IGNORECASE)
+                line = regex.sub(substituto, line)
+            else:
+                regex = re.compile(substring)
+                line = regex.sub(substituto, line)
+        ret = ret + [line]
+    return ret
+
