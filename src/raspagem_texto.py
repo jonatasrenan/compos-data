@@ -19,12 +19,15 @@ def limpeza(arquivo):
     # Concatena
     texto2 = "".join([linha.strip(" ") for linha in texto1])
 
+    # remove acentos
+    import unidecode
+    texto3 = unidecode.unidecode(texto2) # remoção de acentos
+
     # Remove caracteres não imprimíveis
     # método muito lento
-    # from string import printable
+    from string import printable
     # printable = printable + "çÇãÃẽẼĩĨõÕũŨäÄëËïÏöÖüÜâÂêÊîÎôÔûÛáÁéÉíÍóÓúÚàÀèÈìÌòÒùÙ"
-    # texto3 = "".join(char for char in texto2 if char in printable)
-    texto3 = texto2
+    texto4 = "".join(char for char in texto3 if char in printable)
 
     def repl(texto):
         """
@@ -44,21 +47,50 @@ def limpeza(arquivo):
 
     # repete repl(texto3) enquanto ouvir mudanca em texto3
     from src.utils import delta
-    texto4 = delta(texto3, repl)
+    texto5 = delta(texto4, repl)
+
     # Divide as frases
-    texto5 = texto4.split("\n\n")
+    texto6 = texto5.split("\n\n")
     # Remove quebras na mesma frase
-    texto6 = [linha.replace("\n", "") for linha in texto5]
+    texto7 = [linha.replace("\n", "") for linha in texto6]
     # strip linhas
-    texto7 = [linha.strip() for linha in texto6]
+    texto8 = [linha.strip() for linha in texto7]
+
     # remove uma linha que contém somente um número
-    texto8 = [linha for linha in texto7 if not linha.isdigit()]
+    texto9 = [linha for linha in texto8 if not linha.isdigit()]
     # remove frases específicas
-    texto9 = [
-        linha for linha in texto8
-        if not linha == 'Associação Nacional dos Programas de Pós-Graduação em Comunicação'
+    texto10 = [
+        linha for linha in texto9
+        if linha not in [
+            'Associação Nacional dos Programas de Pós-Graduação em Comunicação',
+            'www.compos.org.br',
+            'www.compos.org.br/anais_encontros.php',
+            'XXVI Encontro Anual da Compós, Faculdade Cásper Líbero, São Paulo - SP, 06 a 09 de junho de 2017'
+            'Associação  Nacional  dos  Programas  de  Pós-­‐Graduação  em  Comunicação',
+
+        ] and linha.strip()
     ]
-    return texto9
+
+    texto11 = "<quebra/>".join(texto10)
+
+    def remove(expr, st):
+        import re
+        rg = re.compile(expr)
+        return rg.sub('', st)
+
+    texto12 = texto11
+    lista_expr = [
+        'Associacao.*?Nacional.*?em.*?Comunicacao',
+        '((?=[^\Wa]*X)(?=[^\Wb]*V)(?=[^\Wb]*I)\w+.*?|)Encontro.*?[0-9]{4}'
+    ]
+    for expr in lista_expr:
+        texto12 = remove(expr, texto12)
+
+    texto13 = texto12.split("<quebra/>")
+
+    texto14 = [l for l in texto13 if l]
+
+    return texto14
 
 
 def obter_campos(trabalho):
@@ -85,34 +117,73 @@ def obter_campos(trabalho):
     # ART 	Título do artigo
     trabalho['ART'] = trabalho['trabalho_titulo']
 
-    # AN1 	Nome do autor 1 do artigo
-    # AI1 	Instituição do autor 1 do artigo
-    # AN2 	Nome do autor 2 do artigo
-    # AI2 	Instituição do autor 2 do artigo
-    # AN3 	Nome do autor 3 do artigo
-    # AI3 	Instituição do autor 3 do artigo
-    # AN4 	Nome do autor 4 do artigo
-    # AI4 	Instituição do autor 4 do artigo
+    # ANX 	Nome do autor X do artigo
+    # AIX 	Instituição do autor 1 do artigo
+    # ANX 	Nome do autor X do artigo
     trabalho = obter_autores(trabalho, texto)
 
-    # RA1 	Nome do autor 1 da referência
-    # RN1 	Nacionalidade do autor 1 da referência
-    # RM1 	Indicação se o autor 1 da referência é membro do GT
-    # RA2 	Nome do autor 2 da referência
-    # RN2 	Nacionalidade do autor 2 da referência
-    # RM2 	Indicação se o autor 2 da referência é membro do GT
-    # RA3 	Nome do autor 3 da referência
-    # RN3 	Nacionalidade do autor 3 da referência
-    # RM3 	Indicação se o autor 3 da referência é membro do GT
-    # RA4 	Nome do autor 4 da referência
-    # RN4 	Nacionalidade do autor 4 da referência
-    # RM4 	Indicação se o autor 4 da referência é membro do GT
+    # RAX 	Nome do autor X da referência
+    # RNX 	Nacionalidade do autor X da referência
+    # RMX 	Indicação se o autor X da referência é membro do GT
+
+
     # OBR 	Título da obra referenciada
     # ATC 	Indicação de autocitação (autor do artigo é o mesmo autor referenciado)
+
+    # from src.utils import apos
+    # referencias = apos("Referências", texto)
+    # referencias = "\n".join(referencias)
+
+    # from src.utils import ate
+    # finaliza = ['\n', "Filmografia", "Reportagens"]
+    # referencias = ate("\n", texto)
+
+    trabalho = obter_referencias(trabalho, texto)
 
     # PC1-PC8
     trabalho = obter_palavras_chave(trabalho, texto)
 
+    return trabalho
+
+def limpeza_referencias(texto):
+    import re
+    ref1 = " ".join(texto)
+    regex = re.compile("\n")
+    ref2 = regex.sub("", ref1)
+    regex = re.compile(".*Referencias")
+    ref3 = regex.sub("", ref2)
+    regex = re.compile(".*bibliograficas")
+    ref3 = regex.sub("", ref2)
+    regex = re.compile("Filmografia.*")
+    ref4 = regex.sub("", ref3)
+    regex = re.compile("Reportagens.*")
+    ref5 = regex.sub("", ref4)
+    return ref5
+
+def obter_referencias(trabalho, texto):
+    texto = limpeza_referencias(texto)
+
+    import re
+    regex = re.compile('\(.*?\)')  # remover parênteses
+    texto = regex.sub("", texto)
+    regex = [
+        "(",
+            "[A-Z\- ]{2,}",     # primeiro nome em alta
+            ",\ *",               # obrigatóriamente tem uma ',' e ' '
+            "[A-Z \-a-z]*"       # segunda palavra não é em alta
+            "[.;,]",
+            "(",                #uma ou mais iniciais.
+                " [A-Z]\.",
+                "|",
+            ")*",
+            "|",                #ou
+            "[A-Z\- ]* et al"  # primeiro nome em alta + " et al"
+        ")"
+    ]
+
+    # Muito bom! > "([A-Z\- ]{2,}[,.]\ *[A-Z \-a-z]*[.;,]( [A-Z]\.|)*|[A-Z\- ]* et al)"
+
+    # tratar quando tiver um " e "
     return trabalho
 
 

@@ -3,3 +3,4 @@ cssselect
 pdfminer3k
 requests-cache
 pymongo
+unidecode
