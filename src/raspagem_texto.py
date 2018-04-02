@@ -51,26 +51,24 @@ def limpeza(arquivo):
 
     # Divide as frases
     texto6 = texto5.split("\n\n")
+    # Remove espaco+quebras na mesma frase
+    texto7 = [linha.replace(" \n", "") for linha in texto6]
     # Remove quebras na mesma frase
-    texto7 = [linha.replace("\n", "") for linha in texto6]
+    texto7 = [linha.replace("\n", "") for linha in texto7]
     # strip linhas
     texto8 = [linha.strip() for linha in texto7]
 
     # remove uma linha que contém somente um número
     texto9 = [linha for linha in texto8 if not linha.isdigit()]
     # remove frases específicas
-    texto10 = [
-        linha for linha in texto9
-        if linha not in [
-            'Associação Nacional dos Programas de Pós-Graduação em Comunicação',
-            'www.compos.org.br',
-            'www.compos.org.br/anais_encontros.php',
-            'XXVI Encontro Anual da Compós, Faculdade Cásper Líbero, São Paulo - SP, 06 a 09 de junho de 2017'
-            'Associação  Nacional  dos  Programas  de  Pós-­‐Graduação  em  Comunicação',
-
-        ] and linha.strip()
-    ]
-
+    # texto10 = [
+    #     linha for linha in texto9
+    #     if linha not in [
+    #
+    #
+    #     ] and linha.strip()
+    # ]
+    texto10 = texto9
     texto11 = "<quebra/>".join(texto10)
 
     def remove(expr, st):
@@ -81,7 +79,10 @@ def limpeza(arquivo):
     texto12 = texto11
     lista_expr = [
         'Associacao.*?Nacional.*?em.*?Comunicacao',
-        '((?=[^\Wa]*X)(?=[^\Wb]*V)(?=[^\Wb]*I)\w+.*?|)Encontro.*?[0-9]{4}'
+        '((?=[^\Wa]*X)(?=[^\Wb]*V)(?=[^\Wb]*I)\w+.*?|)Encontro.*?[0-9]{4}',
+        'www.compos.org.br/anais_encontros.php',
+        'www.compos.org.br',
+        '/anais_encontros.php'
     ]
     for expr in lista_expr:
         texto12 = remove(expr, texto12)
@@ -152,8 +153,8 @@ def limpeza_referencias(texto):
     ref2 = regex.sub("", ref1)
     regex = re.compile(".*Referencias")
     ref3 = regex.sub("", ref2)
-    regex = re.compile(".*bibliograficas")
-    ref3 = regex.sub("", ref2)
+    regex = re.compile(".*bibliograficas", )
+    ref3 = regex.sub("", ref3)
     regex = re.compile("Filmografia.*")
     ref4 = regex.sub("", ref3)
     regex = re.compile("Reportagens.*")

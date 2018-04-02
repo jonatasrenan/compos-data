@@ -20,13 +20,13 @@ if not os.path.isfile('trabalhos.csv'):
     print('# Indexa %s itens encontrados (#)' % len(trabalhos))
     trabalhos = map(lambda i: {'#': i[0], **i[1]}, enumerate(trabalhos))  # cria índice '#'
     print('# Salva dados dos trabalhos em CSV')
-    cria_csv(trabalhos, './trabalhos.csv')                       # Salva dados dos trabalhos em CSV
+    cria_csv(trabalhos, './trabalhos.csv')                      # Salva dados dos trabalhos em CSV
 else:
     trabalhos = le_csv('trabalhos.csv')
 
 print('# Baixa documentos dos trabalhos')
-trabalhos = map(download, trabalhos)                        # Baixa documentos dos trabalhos
+trabalhos = map(download, trabalhos)                            # Baixa documentos dos trabalhos
 print('# Converte arquivos para texto')
-trabalhos = map(doc2txt, trabalhos)                        # Baixa documentos dos trabalhos
+trabalhos = map(doc2txt, trabalhos)                             # Baixa documentos dos trabalhos
 print('# Extrai campos do trabalho')
 trabalhos = map(obter_campos, trabalhos)                        # Baixa documentos dos trabalhos

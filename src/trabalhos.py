@@ -48,18 +48,27 @@ def doc2txt(trabalho):
     except:
         # HTTP error et
         return trabalho
-    arq_saida = os.path.join('./textos/%s.%s' % (name.rsplit('.', 1)[-2], "txt"))
+    arq_saida = os.path.join('./htmls/%s.%s' % (name.rsplit('.', 1)[-2], "html"))
 
     if not os.path.isfile(arq_saida):
         if name.rsplit('.', 1)[-1].lower() == 'pdf':
-            proc = subprocess.Popen(
-                ["pdf2txt", "-W0", "-L1", "-t", "text", "-o", arq_saida, arq_entrada],
-                stdout=subprocess.PIPE
-            )
-            output = proc.communicate()[0]
+            import os
+            cwd = os.getcwd()
+            import shlex
+            # docker_command = shlex.split('docker run --rm -v %s:/app bwits/pdf2txt -W0 -L1 -t text -o %s %s' % (cwd, arq_saida, arq_entrada))
+            # docker_command = shlex.split('docker run --rm -v %s:/app bwits/pdf2txt -t html -o %s %s' % (cwd, arq_saida, arq_entrada))
+            command = ["pdf2txt", "-W0", "-L1", "-t", "text", "-o", arq_saida, arq_entrada]
+            # print(command)
+            proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+            with open(arq_saida + '.out', 'w') as file:
+                file.write(proc.communicate()[0])
+                file.close()
+            with open(arq_saida + '.err', 'w') as file:
+                file.write(proc.communicate()[1])
+                file.close()
+
             trabalho['trabalho_texto'] = arq_saida
             print('Convertido pdf2txt: %s para %s' % (arq_saida, arq_entrada))
-
         else:
             print("Não é pdf %s %s %s" % (trabalho['trabalho_link'], trabalho['trabalho_arquivo'], trabalho['#']))
             trabalho['trabalho_texto'] = "ERRO"
