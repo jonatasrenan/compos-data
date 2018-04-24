@@ -16,7 +16,7 @@ if not os.path.isfile('trabalhos.csv'):
     print('1 Navegação no site')
     print('- Navega encontros')
     encontros = obter_encontros()
-    print('- Navega grupos de trabalhos')
+    print('- Navega csv de trabalhos')
     gts = flat(map(obter_gts, encontros))
     print('- Navega trabalhos')
     trabalhos = flat(map(obter_trabalhos, gts))
@@ -42,10 +42,17 @@ else:
     print('2 Raspagem prévia encontrada (para refazer, delete o arquivo referencias.csv)')
     referencias = le_csv('referencias.csv')
 
+
+import unidecode
+from pyexcel.cookbook import merge_all_to_a_book
+import glob
 grupos = list(set([i['GTR'] for i in referencias]))
 for grupo in grupos:
     ref_grupo = [i for i in referencias if i['GTR'] == grupo]
-    cria_csv(ref_grupo, './grupos/%s.csv' % grupo.replace(' ', '_'))
+    novo_nome = unidecode.unidecode(grupo)
+    novo_nome = grupo.replace(' ', '_').replace(',', '').replace(':', '').replace('(', '').replace(')', '')
+    cria_csv(ref_grupo, './csv/%s.csv' % novo_nome)
+    merge_all_to_a_book(glob.glob("./csv/%s.csv" % novo_nome), "./xlsx/%s.xlsx" % novo_nome)
 
 print('4 Fim')
 
