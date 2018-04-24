@@ -5,7 +5,7 @@ Jônatas Renan Camilo Alves (jonatasrenan@dcc.ufmg.br)
 #### Licença
 *GNU GENERAL PUBLIC LICENSE version 3* by [Free Software Foundation, Inc.](http://fsf.org/).
 #### Resultados
-[Resultados encontrados_por grupo](https://github.com/jonatasrenan/compos-data/tree/master/grupos)
+[Resultados encontrados_por grupo](https://github.com/jonatasrenan/compos-data/tree/master/xlsx)
 #### Campos
 |Código|Rótulo|Implementado|
 |:------:|:------:|:--------:|
