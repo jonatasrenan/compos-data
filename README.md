@@ -1,10 +1,12 @@
-# Extrator de dados do site compos.org.br
-
-COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicação
-
-
-### Extração de campos à partir dos trabalhos:
-
+# Extrator de dados compos.org.br e Raspagem de dados de Artigos em PDF
+Dados do COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicação
+#### Autor
+Jônatas Renan Camilo Alves (jonatasrenan@ufmg.br)
+#### Licença
+*GNU GENERAL PUBLIC LICENSE version 3* by [Free Software Foundation, Inc.](http://fsf.org/).
+#### Resultados
+[Resultados encontrados_por grupo](https://github.com/jonatasrenan/compos-data/tree/master/grupos)
+#### Campos
 |Código|Rótulo|Implementado|
 |:------:|:------:|:--------:|
 |ATM|Área temática do Projeto   |
@@ -22,6 +24,3 @@ COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicaç�
 |RMX|Indicação se o autor X da referência é membro do GT||
 |ATC|Indicação de autocitação (autor do artigo é o mesmo autor referenciado)||
 
-## Autor
-
-* Jônatas Renan Camilo Alves jonatasrenan@dcc.ufmg.br
