@@ -6,18 +6,35 @@
 """
 
 
-def map(fn, l):
+def tmap(func, args, workers=10):
     """
-    Redefinição da função map, paralela, aguarda threads no final e retorna resultado expandido em lista.
-    :param fn: função
-    :param l: lista
-    :return: resultado do fn em l expandido em lista
+    Redefinição da função map, multithread, aguarda threads no final e retorna resultado expandido em lista.
+    :param func: função
+    :param args: lista
+    :param workers: número de threads máximo
+    :return: resultado do mapeamento de fn em l expandido em lista
     """
     import concurrent.futures
-    threads = concurrent.futures.ThreadPoolExecutor(max_workers=20)
-    result = threads.map(fn, l)
-    threads.shutdown(wait=True)
-    return list(result)
+    with concurrent.futures.ThreadPoolExecutor(workers) as ex:
+        res = ex.map(func, args)
+        ex.shutdown(wait=True)
+
+    return list(res)
+
+
+def pmap(func, args, workers=8):
+    """
+    Redefinição da função map, multiprocessos, aguarda processos no final e retorna resultado expandido em lista.
+    :param func: função
+    :param args: lista
+    :param workers: número de processos máximo
+    :return: resultado do mapeamento de fn em l expandido em lista
+    """
+    import concurrent.futures
+    with concurrent.futures.ProcessPoolExecutor(workers) as ex:
+        res = ex.map(func, args)
+        ex.shutdown(wait=True)
+    return list(res)
 
 
 def flat(l):
@@ -42,31 +59,6 @@ def delta(dado, func):
         dado = delta
         delta = func(dado)
     return dado
-
-
-def cria_csv(dics, nome_arquivo):
-    """
-    Cria CSV à partir de uma lista de dicionários
-    :param dics: lista de dicionários
-    :param nome_arquivo: nome do arquivo gerado
-    :return: None
-    """
-    keys = dics[0].keys()
-    import csv
-    with open(nome_arquivo, 'w') as output_file:
-        dict_writer = csv.DictWriter(output_file, keys)
-        dict_writer.writeheader()
-        dict_writer.writerows(dics)
-
-
-def le_csv(nome_arquivo):
-    """
-    Lê CSV e cria lista de dicionários
-    :param nome_arquivo: csv
-    :return: lista de dicionarios
-    """
-    import csv
-    return list(csv.DictReader(open(nome_arquivo)))
 
 
 def filtra(texto_completo, substrings, ignore_case=True):
@@ -119,3 +111,29 @@ def limpa(texto_completo, substrings, ignore_case=True, substituto=""):
         ret = ret + [line]
     return ret
 
+
+def cria_csv(dics, nome_arquivo, keys=None):
+    """
+    Cria CSV à partir de uma lista de dicionários
+    :param dics: lista de dicionários
+    :param nome_arquivo: nome do arquivo gerado
+    :return: None
+    """
+    if not keys:
+        keys = sorted(set().union(*(d.keys() for d in dics)))
+
+    import csv
+    with open(nome_arquivo, 'w') as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(dics)
+
+
+def le_csv(nome_arquivo):
+    """
+    Lê CSV e cria lista de dicionários
+    :param nome_arquivo: csv
+    :return: lista de dicionarios
+    """
+    import csv
+    return list(csv.DictReader(open(nome_arquivo)))

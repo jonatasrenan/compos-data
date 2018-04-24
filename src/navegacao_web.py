@@ -11,7 +11,9 @@ import requests_cache
 from lxml.cssselect import CSSSelector
 from src.raspagem_web import raspar_encontro, raspar_gt, raspar_trabalho
 
-from src.utils import map
+
+def pmap(f, iter):
+    return list(map(f, iter))
 
 
 def acessar(endereco, dados, seletor):
@@ -38,7 +40,7 @@ def obter_encontros():
     dados = {'xajax': 'carregaObjetoAnaisEncontro'}
     seletor = 'a'
     selecoes = acessar(endereco, dados, seletor)
-    return map(raspar_encontro, selecoes)
+    return pmap(raspar_encontro, selecoes)
 
 
 def obter_gts(encontro):
@@ -51,7 +53,7 @@ def obter_gts(encontro):
     dados = {'xajax': 'carregaGt', 'xajaxargs[]': encontro['compos_id']}
     seletor = 'a'
     selecoes = acessar(endereco, dados, seletor)
-    gts = map(raspar_gt, selecoes)
+    gts = pmap(raspar_gt, selecoes)
     [gt.update(encontro) for gt in gts]
     return gts
 
@@ -66,7 +68,7 @@ def obter_trabalhos(gt):
     dados = {'xajax': 'carregaObjetoAnais', 'xajaxargs[]': [gt['gt_id'], gt['compos_id']]}
     seletor = '.boxLine'
     selecoes = acessar(endereco, dados, seletor)
-    trabalhos = map(raspar_trabalho, selecoes)
+    trabalhos = pmap(raspar_trabalho, selecoes)
     [trabalho.update(gt) for trabalho in trabalhos]
     return trabalhos
 

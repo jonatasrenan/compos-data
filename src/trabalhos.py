@@ -29,36 +29,35 @@ def download(trabalho):
             print('Baixado (%s): %s' % (trabalho['#'], trabalho['trabalho_link']))
         except urllib.error.HTTPError as e:
             print("%s %s %s" % (e, trabalho['trabalho_link'], trabalho['#']))
-            trabalho['trabalho_arquivo'] = e
+            trabalho['trabalho_arquivo'] = None
     return trabalho
 
 
 def doc2txt(trabalho):
     """
-    Converte arquivo baixado para formato texto na subpasta textos
+    Converte arquivo baixado para formato texto na subpasta htmls
     :param trabalho:
     :return: trabalho atualizado
     """
     import os
     import subprocess
 
-    name = trabalho['trabalho_arquivo']
-    try:
-        arq_entrada = os.path.join('./downloads', name)
-    except:
-        # HTTP error et
+    trabalho_arquivo = trabalho['trabalho_arquivo']
+
+    if not trabalho_arquivo:
         return trabalho
-    arq_saida = os.path.join('./htmls/%s.%s' % (name.rsplit('.', 1)[-2], "html"))
+
+    try:
+        arq_entrada = os.path.join('./downloads', trabalho_arquivo)
+    except Exception as e:
+        print('doc2txt', e)
+        return trabalho
+    arq_saida = os.path.join('./htmls/%s.%s' % (trabalho_arquivo.rsplit('.', 1)[-2], "html"))
 
     if not os.path.isfile(arq_saida):
-        if name.rsplit('.', 1)[-1].lower() == 'pdf':
+        if trabalho_arquivo.rsplit('.', 1)[-1].lower() == 'pdf':
             import os
-            cwd = os.getcwd()
-            import shlex
-            # docker_command = shlex.split('docker run --rm -v %s:/app bwits/pdf2txt -W0 -L1 -t text -o %s %s' % (cwd, arq_saida, arq_entrada))
-            # docker_command = shlex.split('docker run --rm -v %s:/app bwits/pdf2txt -t html -o %s %s' % (cwd, arq_saida, arq_entrada))
             command = ["pdf2txt", "-W0", "-L1", "-t", "text", "-o", arq_saida, arq_entrada]
-            # print(command)
             proc = subprocess.Popen(command, stdout=subprocess.PIPE)
             with open(arq_saida + '.out', 'w') as file:
                 file.write(proc.communicate()[0])
@@ -70,8 +69,8 @@ def doc2txt(trabalho):
             trabalho['trabalho_texto'] = arq_saida
             print('Convertido pdf2txt: %s para %s' % (arq_saida, arq_entrada))
         else:
-            print("Não é pdf %s %s %s" % (trabalho['trabalho_link'], trabalho['trabalho_arquivo'], trabalho['#']))
-            trabalho['trabalho_texto'] = "ERRO"
+            print("Erro: Arquivo não é PDF %s %s %s" % (trabalho['trabalho_link'], trabalho['trabalho_arquivo'], trabalho['#']))
+            trabalho['trabalho_texto'] = None
     else:
         trabalho['trabalho_texto'] = arq_saida
 

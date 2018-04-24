@@ -103,5 +103,5 @@ ENV/
 cache.sqlite
 downloads/*
 !downloads/.gitkeep
-textos/*
-!textos/.gitkeep
+htmls/*
+!htmls/.gitkeep
