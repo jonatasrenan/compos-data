@@ -1,7 +1,7 @@
-# Extrator de dados compos.org.br e Raspagem de dados de Artigos em PDF
-Dados do COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicação
+# Extração de dados de artigos em PDF raspados do site compos.org.br
+COMPÓS - Associação Nacional dos Programas de Pós-Graduação em Comunicação
 #### Autor
-Jônatas Renan Camilo Alves (jonatasrenan@ufmg.br)
+Jônatas Renan Camilo Alves (jonatasrenan@dcc.ufmg.br)
 #### Licença
 *GNU GENERAL PUBLIC LICENSE version 3* by [Free Software Foundation, Inc.](http://fsf.org/).
 #### Resultados
@@ -23,4 +23,3 @@ Jônatas Renan Camilo Alves (jonatasrenan@ufmg.br)
 |RNX|Nacionalidade do autor X da referência||
 |RMX|Indicação se o autor X da referência é membro do GT||
 |ATC|Indicação de autocitação (autor do artigo é o mesmo autor referenciado)||
-
